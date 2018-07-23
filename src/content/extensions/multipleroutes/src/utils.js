@@ -1,4 +1,3 @@
-/* eslint-disable */
 /*
  *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
  *
@@ -11,8 +10,8 @@
 
 'use strict';
 
-var pn = chrome.privacy.network;
-var pi = null;
+const pn = chrome.privacy.network;
+const pi = chrome.privacy.IPHandlingPolicy;
 
 function browserSupportsIPHandlingPolicy() {
   return pn.webRTCIPHandlingPolicy !== undefined;
@@ -31,8 +30,6 @@ if (!browserSupportsIPHandlingPolicy()) {
   chrome.privacy.IPHandlingPolicy.DISABLE_NON_PROXIED_UDP = 3;
 }
 
-pi = chrome.privacy.IPHandlingPolicy;
-
 // Helper function to convert the parameters to policy synchronously.
 function convertToPolicy(allowMultiRoute, allowUdp) {
   if (!allowUdp) {
@@ -48,14 +45,14 @@ function convertToPolicy(allowMultiRoute, allowUdp) {
 
 // This function just returns the new policy value based on the 2 booleans
 // without changing any preferences.
+// eslint-disable-next-line no-unused-vars
 function getPolicyFromBooleans(callback) {
   pn.webRTCMultipleRoutesEnabled.get({}, function(allowMultiRoute) {
     if (!browserSupportsNonProxiedUdpBoolean()) {
       callback(convertToPolicy(allowMultiRoute.value, true));
     } else {
       pn.webRTCNonProxiedUdpEnabled.get({}, function(allowUdp) {
-        callback(convertToPolicy(allowMultiRoute.value,
-                                 allowUdp.value));
+        callback(convertToPolicy(allowMultiRoute.value, allowUdp.value));
       });
     }
   });
